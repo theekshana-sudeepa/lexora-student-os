@@ -1,7 +1,8 @@
 {
   "name": "lexora-student-os",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
+  "author": "Theekshana Sudeepa (https://github.com/theekshana-sudeepa)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

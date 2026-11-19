@@ -11,15 +11,21 @@ export default function LicenseGuard({ children }) {
   useEffect(() => {
     // 1. Get Device ID
     const id = getDeviceId();
-    setDeviceId(id);
+    if (id) {
+      queueMicrotask(() => {
+        setDeviceId(id);
+      });
+    }
 
     // 2. Check if we already verified this session?
     const isVerified = localStorage.getItem('lexora_license_active');
-    if (isVerified === 'true') {
-      setStatus('success');
-    } else {
-      setStatus('input');
-    }
+    queueMicrotask(() => {
+      if (isVerified === 'true') {
+        setStatus('success');
+      } else {
+        setStatus('input');
+      }
+    });
   }, []);
 
   const handleVerify = async () => {

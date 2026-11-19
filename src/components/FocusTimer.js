@@ -1,12 +1,28 @@
 // src/components/FocusTimer.js
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export default function FocusTimer() {
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState('focus'); // 'focus' or 'break'
+
+  const toggleMode = useCallback(() => {
+    setMode((prevMode) => {
+      const nextMode = prevMode === 'focus' ? 'break' : 'focus';
+      setMinutes(nextMode === 'focus' ? 25 : 5);
+      return nextMode;
+    });
+    setSeconds(0);
+    setIsActive(false);
+  }, []);
+
+  const reset = useCallback(() => {
+    setIsActive(false);
+    setMinutes(mode === 'focus' ? 25 : 5);
+    setSeconds(0);
+  }, [mode]);
 
   useEffect(() => {
     let interval = null;
@@ -16,38 +32,21 @@ export default function FocusTimer() {
           if (minutes === 0) {
             // Timer Finished
             setIsActive(false);
-            // Play a sound here later
             alert(mode === 'focus' ? "Focus Complete! Take a break." : "Break over! Back to work.");
             toggleMode();
           } else {
-            setMinutes(minutes - 1);
+            setMinutes((m) => m - 1);
             setSeconds(59);
           }
         } else {
-          setSeconds(seconds - 1);
+          setSeconds((s) => s - 1);
         }
       }, 1000);
     }
-    return () => clearInterval(interval);
-  }, [isActive, minutes, seconds]);
-
-  const toggleMode = () => {
-    if (mode === 'focus') {
-      setMode('break');
-      setMinutes(5);
-    } else {
-      setMode('focus');
-      setMinutes(25);
-    }
-    setSeconds(0);
-    setIsActive(false);
-  };
-
-  const reset = () => {
-    setIsActive(false);
-    setMinutes(mode === 'focus' ? 25 : 5);
-    setSeconds(0);
-  };
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isActive, minutes, seconds, mode, toggleMode]);
 
   return (
     <div className="flex flex-col items-center justify-center p-6 w-full h-full text-white">

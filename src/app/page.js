@@ -13,7 +13,11 @@ export default function Home() {
   useEffect(() => {
     // On load, fetch the Device ID
     const id = getDeviceId();
-    setDeviceId(id);
+    if (id) {
+      queueMicrotask(() => {
+        setDeviceId(id);
+      });
+    }
   }, []);
 
   const handleVerify = async () => {

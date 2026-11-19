@@ -19,7 +19,16 @@ function ExamCountdown() {
   // Load from local storage on start
   useEffect(() => {
     const saved = localStorage.getItem('lexora_exams');
-    if (saved) setExams(JSON.parse(saved));
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        queueMicrotask(() => {
+          setExams(parsed);
+        });
+      } catch (e) {
+        console.error("Failed to parse saved exams", e);
+      }
+    }
   }, []);
 
   // Save whenever exams change
